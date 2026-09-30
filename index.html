@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accessible Tabs Component – Demo</title>
+  <!-- Remove "no-js" as early as possible so CSS can tell if JavaScript is running. -->
+  <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+  <link rel="stylesheet" href="css/tabs.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="page-header">
+    <h1>Accessible Tabs Component</h1>
+    <p>Vanilla HTML, CSS and JavaScript. Try the mouse, touch, or keyboard (Arrow keys, Home, End).</p>
+  </header>
+
+  <main id="main">
+    <!-- DEMO 1: automatic activation (default). Arrow keys immediately show the panel. -->
+    <section id="demo1" aria-labelledby="demo1-title">
+      <h2 id="demo1-title">Demo 1 – Automatic activation</h2>
+
+      <!--
+        MARKUP CONTRACT (progressive enhancement):
+        - The root has data-tabs.
+        - The list has data-tabs-list; each link's href points at a panel id.
+        - Each panel has data-tabs-panel.
+        Without JavaScript the links simply jump to the stacked panels.
+      -->
+      <div class="tabs" data-tabs>
+        <ul class="tabs__list" data-tabs-list aria-label="Product information">
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+
+        <div class="tabs__panel" id="overview" data-tabs-panel>
+          <h3>Overview</h3>
+          <p>Tabs let people switch between related content without leaving the page, keeping the interface compact and easy to scan.</p>
+        </div>
+        <div class="tabs__panel" id="features" data-tabs-panel>
+          <h3>Features</h3>
+          <ul>
+            <li>Full keyboard support (roving tabindex)</li>
+            <li>ARIA roles, states and relationships</li>
+            <li>Respects <code>prefers-reduced-motion</code></li>
+            <li>Deep linking through the URL hash</li>
+          </ul>
+        </div>
+        <div class="tabs__panel" id="pricing" data-tabs-panel>
+          <h3>Pricing</h3>
+          <p>This component is free to use and modify. No dependencies, no build step.</p>
+        </div>
+        <div class="tabs__panel" id="faq" data-tabs-panel>
+          <h3>FAQ</h3>
+          <p><strong>Does it work without JavaScript?</strong> Yes. All panels are shown stacked and the links jump to them.</p>
+        </div>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite">Select a tab to see events here.</p>
+    </section>
+
+    <!-- DEMO 2: manual activation via data attribute. Same code, second instance = reusability. -->
+    <section id="demo2" aria-labelledby="demo2-title">
+      <h2 id="demo2-title">Demo 2 – Manual activation</h2>
+      <p>Arrow keys move focus only; press <kbd>Enter</kbd> or <kbd>Space</kbd> to open the panel.</p>
+
+      <div class="tabs" data-tabs data-tabs-activation="manual" data-tabs-animate="true">
+        <ul class="tabs__list" data-tabs-list aria-label="Account settings">
+          <li><a href="#profile">Profile</a></li>
+          <li><a href="#security">Security</a></li>
+          <li><a href="#notifications">Notifications</a></li>
+        </ul>
+        <div class="tabs__panel" id="profile" data-tabs-panel><h3>Profile</h3><p>Update your name, photo and bio.</p></div>
+        <div class="tabs__panel" id="security" data-tabs-panel><h3>Security</h3><p>Change your password and enable two-factor authentication.</p></div>
+        <div class="tabs__panel" id="notifications" data-tabs-panel><h3>Notifications</h3><p>Choose which emails and alerts you receive.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <noscript><p class="noscript-note">JavaScript is disabled, so all content is shown as a simple list.</p></noscript>
+
+  <script src="js/tabs.js"></script>
+  <script>
+    // Auto-initialise every [data-tabs] element on the page.
+    Tabs.initAll();
+
+    // Example of listening to the custom event the component emits.
+    document.addEventListener('tabs:change', function (e) {
+      var status = document.getElementById('status');
+      if (status && e.target.closest('section').id !== 'demo2') {
+        status.textContent = 'Active tab: ' + e.detail.tab.textContent + ' (index ' + e.detail.index + ')';
+      }
+    });
+  </script>
+</body>
+</html>

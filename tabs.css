@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Accessible Tabs – styles
+   Structure: 1) tokens  2) base/demo  3) component  4) states  5) responsive
+   6) motion  7) fallback (no JS)
+   ========================================================================== */
+
+/* 1) DESIGN TOKENS – change these to re-theme the component */
+:root {
+  --tabs-accent: #2f5bea;
+  --tabs-text: #1c2333;
+  --tabs-muted: #5b6478;
+  --tabs-bg: #ffffff;
+  --tabs-border: #d9deea;
+  --tabs-radius: 10px;
+  --tabs-speed: 250ms;
+  --page-bg: #f4f6fb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tabs-accent: #8aa4ff;
+    --tabs-text: #e8ebf5;
+    --tabs-muted: #a4adc4;
+    --tabs-bg: #1a2033;
+    --tabs-border: #323b57;
+    --page-bg: #10131f;
+  }
+}
+
+/* 2) BASE / DEMO PAGE */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0 1rem 3rem;
+  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--tabs-text); background: var(--page-bg);
+}
+main, .page-header { max-width: 46rem; margin: 0 auto; }
+.page-header { padding: 2rem 0 0.5rem; }
+h1 { margin: 0 0 .25rem; font-size: 1.75rem; }
+h2 { margin-top: 2.5rem; font-size: 1.25rem; }
+.skip-link { position: absolute; left: -999px; top: 0; background: var(--tabs-accent); color: #fff; padding: .5rem 1rem; }
+.skip-link:focus { left: 0; z-index: 10; }
+.status { color: var(--tabs-muted); font-size: .9rem; }
+.noscript-note { text-align: center; color: var(--tabs-muted); }
+kbd { border: 1px solid var(--tabs-border); border-radius: 4px; padding: 0 .35em; font-size: .85em; }
+
+/* 3) COMPONENT */
+.tabs {
+  background: var(--tabs-bg);
+  border: 1px solid var(--tabs-border);
+  border-radius: var(--tabs-radius);
+  overflow: hidden;
+}
+.tabs__list {
+  position: relative;               /* anchor for the sliding indicator */
+  display: flex; gap: .25rem;
+  margin: 0; padding: 0 .5rem; list-style: none;
+  border-bottom: 1px solid var(--tabs-border);
+  overflow-x: auto;                 /* scroll instead of wrapping on narrow screens */
+  scrollbar-width: thin;
+}
+.tabs__list li { flex: 0 0 auto; }
+.tabs__list a {
+  display: block; padding: .85rem 1rem;
+  color: var(--tabs-muted); text-decoration: none; font-weight: 600;
+  min-height: 44px;                 /* comfortable touch target */
+  transition: color var(--tabs-speed);
+}
+.tabs__list a:hover { color: var(--tabs-text); }
+.tabs__panel { padding: 1.25rem 1.5rem; }
+.tabs__panel h3 { margin-top: 0; }
+
+/* 4) STATES */
+.tabs__list a[aria-selected="true"] { color: var(--tabs-accent); }
+.tabs__list a:focus-visible,
+.tabs__panel:focus-visible {
+  outline: 3px solid var(--tabs-accent); outline-offset: -3px;
+}
+/* Sliding underline; position/size are set from JS through CSS variables */
+.tabs__indicator {
+  position: absolute; left: 0; bottom: 0; height: 3px;
+  width: var(--indicator-w, 0); transform: translateX(var(--indicator-x, 0));
+  background: var(--tabs-accent); border-radius: 3px 3px 0 0;
+  transition: transform var(--tabs-speed) ease, width var(--tabs-speed) ease;
+  pointer-events: none;
+}
+/* Enter animation for the newly shown panel */
+.tabs__panel.is-entering { animation: tabs-enter var(--tabs-speed) ease both; }
+@keyframes tabs-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.tabs__panel[hidden] { display: none; }
+
+/* 5) RESPONSIVE */
+@media (max-width: 480px) {
+  .tabs__list a { padding: .75rem .8rem; font-size: .95rem; }
+  .tabs__panel { padding: 1rem; }
+}
+
+/* 6) MOTION – honour the user's OS setting */
+@media (prefers-reduced-motion: reduce) {
+  .tabs__indicator, .tabs__list a { transition: none; }
+  .tabs__panel.is-entering { animation: none; }
+}
+
+/* 7) FALLBACK – no JavaScript: show links + all panels stacked.
+      Old browsers without CSS custom properties still get a plain, readable layout. */
+.no-js .tabs__list { flex-wrap: wrap; overflow: visible; }
+.no-js .tabs__list a { color: var(--tabs-accent); text-decoration: underline; }
+.no-js .tabs__panel + .tabs__panel { border-top: 1px solid var(--tabs-border); }
